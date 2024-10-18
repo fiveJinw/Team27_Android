@@ -3,7 +3,6 @@ package com.example.togetherpet.fragment
 import android.graphics.Color
 import android.icu.text.SimpleDateFormat
 import android.icu.util.TimeZone
-import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -89,7 +88,6 @@ class WalkingPetResultFragment : Fragment() {
         val segment = RouteLineSegment.from(
             arrayList
         ).setStyles(stylesSet.getStyles(0))
-
         val options = RouteLineOptions.from(segment)
             .setStylesSet(stylesSet)
 
@@ -115,11 +113,13 @@ class WalkingPetResultFragment : Fragment() {
     fun initListener(){
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED){
-                sharedViewModel.arrayLoc.collect{
-                    Log.d("testt", "listener, Array : ${it}")
-                    displayStartPoint(it)
-                    drawLine(it)
-                    displayEndPoint(it)
+                sharedViewModel.arrayLoc.collect{ arrayLoc ->
+                    Log.d("testt", "listener, Array : ${arrayLoc}")
+                    if(arrayLoc.isNotEmpty()){
+                        displayStartPoint(arrayLoc)
+                        drawLine(arrayLoc)
+                        displayEndPoint(arrayLoc)
+                    }
                 }
             }
         }

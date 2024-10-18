@@ -37,7 +37,6 @@ class WalkingPetViewModel @Inject constructor(
     ViewModel() {
 
     private val _distance = MutableStateFlow<Int>(0)
-    private val _arrayLastTwoLoc = MutableStateFlow<ArrayList<LatLng>>(ArrayList())
     private val _calories = MutableStateFlow<Int>(0)
     private val _time = MutableStateFlow<Long>(0)
     private val _arrayLoc = MutableStateFlow<ArrayList<LatLng>>(ArrayList())
@@ -45,7 +44,6 @@ class WalkingPetViewModel @Inject constructor(
     var base: Long = 0
 
     val distance: StateFlow<Int> get() = _distance.asStateFlow()
-    val arrayLastTwoLoc: StateFlow<ArrayList<LatLng>> get() = _arrayLastTwoLoc.asStateFlow()
     val calories: StateFlow<Int> get() = _calories.asStateFlow()
     val time: StateFlow<Long> get() = _time.asStateFlow()
     val arrayLoc: StateFlow<ArrayList<LatLng>> get() = _arrayLoc.asStateFlow()
@@ -122,27 +120,11 @@ class WalkingPetViewModel @Inject constructor(
                     val newArrayLoc = ArrayList(_arrayLoc.value).apply{add(latLng)}
                     _arrayLoc.value = newArrayLoc
                     Log.d("testt", "array : ${arrayLoc.value}")
-                    updateLastTwoLocation(latLng)
                     calculateCalories()
                 }
             }
         }
         return locationCallback
-    }
-
-    fun updateLastTwoLocation(latLng: LatLng) {
-        if (_arrayLastTwoLoc.value.size >= 2) {
-            val newArrayList = ArrayList(_arrayLastTwoLoc.value).apply {
-                add(latLng)
-                removeAt(0)
-            }
-            _arrayLastTwoLoc.value = newArrayList
-        } else {
-            val newArrayList = ArrayList(_arrayLastTwoLoc.value).apply {
-                add(latLng)
-            }
-            _arrayLastTwoLoc.value = newArrayList
-        }
     }
 
     suspend fun calculateBetweenTwoLocation(indexOne : Int, indexTwo : Int) {

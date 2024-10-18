@@ -165,6 +165,10 @@ class WalkingPetFragment : Fragment() {
             }
         }
 
+        binding.walkingSavePageButton.setOnClickListener{
+            navigateToRecordPage()
+        }
+
     }
 
     fun initMap(){
@@ -252,6 +256,13 @@ class WalkingPetFragment : Fragment() {
     fun navigateToResultPage(){
         val transaction = requireActivity().supportFragmentManager.beginTransaction()
         transaction.replace(R.id.home_frameLayout, WalkingPetResultFragment())
+        transaction.addToBackStack(null)
+        transaction.commit()
+    }
+
+    fun navigateToRecordPage(){
+        val transaction = requireActivity().supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.home_frameLayout, WalkingPetRecordFragment())
         transaction.addToBackStack(null)
         transaction.commit()
     }
