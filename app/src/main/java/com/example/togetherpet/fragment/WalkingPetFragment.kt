@@ -165,6 +165,7 @@ class WalkingPetFragment : Fragment() {
             }
         }
 
+
         binding.walkingSavePageButton.setOnClickListener{
             navigateToRecordPage()
         }

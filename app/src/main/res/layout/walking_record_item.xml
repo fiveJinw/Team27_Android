@@ -71,6 +71,7 @@
         />
     
     <com.kakao.vectormap.MapView
+        android:id="@+id/walking_map_view"
         android:layout_width="118dp"
         android:layout_height="110dp"
         app:layout_constraintTop_toTopOf="parent"

@@ -1,26 +1,40 @@
 package com.example.togetherpet.fragment
 
+import android.icu.text.SimpleDateFormat
+import android.icu.util.TimeZone
 import android.os.Bundle
 import android.os.SystemClock
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import com.example.togetherpet.CalendarViewPagerAdapter
 import com.example.togetherpet.OnClickWalkingRecordListener
 import com.example.togetherpet.R
 import com.example.togetherpet.WalkingRecordAdapter
 import com.example.togetherpet.databinding.FragmentWalkingPetRecordBinding
 import com.example.togetherpet.testData.entity.WalkingRecord
+import com.kakao.vectormap.LatLng
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.util.Locale
 
-class WalkingPetRecordFragment : Fragment(), OnClickWalkingRecordListener {
+@AndroidEntryPoint
+class WalkingPetRecordFragment : Fragment(), OnClickWalkingRecordListener, DateClickListener {
 
-    private var _binding : FragmentWalkingPetRecordBinding? = null
+    private var _binding: FragmentWalkingPetRecordBinding? = null
     private val binding get() = _binding!!
-    private val sharedViewModel : WalkingPetViewModel by activityViewModels()
+    private val sharedViewModel: WalkingPetRecordViewModel by activityViewModels()
 
+    lateinit var selectedDate: LocalDate
     lateinit var walkingRecyclerViewAdapter: WalkingRecordAdapter
 
 
@@ -34,35 +48,78 @@ class WalkingPetRecordFragment : Fragment(), OnClickWalkingRecordListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d("testt", "onViewCreated")
+
         initListener()
         initRecyclerView()
+        setOneWeekViewPager()
     }
 
-    fun initListener(){
-        binding.walkingPageButton.setOnClickListener{
+    private fun setOneWeekViewPager() {
+        val calendarAdapter = CalendarViewPagerAdapter(requireActivity(), this)
+        binding.weekViewpager.adapter = calendarAdapter
+        binding.weekViewpager.setCurrentItem(CalendarViewPagerAdapter.START_POSITION, false)
+
+    }
+
+    fun initListener() {
+        binding.walkingPageButton.setOnClickListener {
             navigateToWalkingPage()
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                sharedViewModel.arrayRecord.collect {
+                    walkingRecyclerViewAdapter.submitList(it)
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                sharedViewModel.allDistance.collect {
+                    binding.distanceSumValue.text = "총 ${it.toString()}m 산책했어요!"
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                sharedViewModel.allTime.collect {
+                    val format = SimpleDateFormat("HH:mm:ss", Locale.KOREAN)
+                    format.timeZone = TimeZone.getTimeZone("UTC")
+                    binding.timeSumValue.text = format.format(it)
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                sharedViewModel.selectDay.collect {
+                    sharedViewModel.getRecord(selectedDate)
+                }
+            }
         }
     }
 
-    fun initRecyclerView(){
+    fun initRecyclerView() {
         walkingRecyclerViewAdapter = WalkingRecordAdapter(this)
         binding.walkingRecyclerview.layoutManager = LinearLayoutManager(requireContext())
         binding.walkingRecyclerview.adapter = walkingRecyclerViewAdapter
 
-        val array = arrayListOf<WalkingRecord>(WalkingRecord(10,System.currentTimeMillis(),System.currentTimeMillis(),SystemClock.elapsedRealtime(), 10), WalkingRecord(10,System.currentTimeMillis(),System.currentTimeMillis(),SystemClock.elapsedRealtime(), 10), WalkingRecord(10,System.currentTimeMillis(),System.currentTimeMillis(),SystemClock.elapsedRealtime(), 10))
-        walkingRecyclerViewAdapter.submitList(array)
     }
 
-    fun navigateToWalkingPage(){
+    fun navigateToWalkingPage() {
         val transaction = requireActivity().supportFragmentManager.beginTransaction()
         transaction.replace(R.id.home_frameLayout, WalkingPetFragment())
         transaction.addToBackStack(null)
         transaction.commit()
     }
 
-    override fun navigateToDetailRecordPage(){
+    override fun navigateToDetailRecordPage(position: Int) {
+        sharedViewModel.getSelectedDetailRecord(position)
         val transaction = requireActivity().supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.home_frameLayout, WalkingPetFragment())
+        transaction.replace(R.id.home_frameLayout, WalkingPetRecordDetailFragment())
         transaction.addToBackStack(null)
         transaction.commit()
     }
@@ -71,5 +128,10 @@ class WalkingPetRecordFragment : Fragment(), OnClickWalkingRecordListener {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    override fun onClickDate(date: LocalDate) {
+        selectedDate = date
+        sharedViewModel.getRecord(selectedDate)
     }
 }
