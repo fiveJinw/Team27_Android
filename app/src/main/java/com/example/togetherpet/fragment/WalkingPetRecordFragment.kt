@@ -34,7 +34,7 @@ class WalkingPetRecordFragment : Fragment(), OnClickWalkingRecordListener, DateC
     private val binding get() = _binding!!
     private val sharedViewModel: WalkingPetRecordViewModel by activityViewModels()
 
-    lateinit var selectedDate: LocalDate
+    private var selectedDate: LocalDate = LocalDate.now()
     lateinit var walkingRecyclerViewAdapter: WalkingRecordAdapter
 
 
@@ -59,6 +59,7 @@ class WalkingPetRecordFragment : Fragment(), OnClickWalkingRecordListener, DateC
         val calendarAdapter = CalendarViewPagerAdapter(requireActivity(), this)
         binding.weekViewpager.adapter = calendarAdapter
         binding.weekViewpager.setCurrentItem(CalendarViewPagerAdapter.START_POSITION, false)
+        sharedViewModel.getRecord(selectedDate)
 
     }
 
