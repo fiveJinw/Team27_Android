@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 class SplashActivity : AppCompatActivity() {
 
     private lateinit var splashScreen: SplashScreen
-    private val viewModel : SplashActivityViewModel by viewModels()
+    private val viewModel: SplashActivityViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,8 +35,8 @@ class SplashActivity : AppCompatActivity() {
         setContentView(R.layout.activity_splash)
 
         lifecycleScope.launch {
-            repeatOnLifecycle((Lifecycle.State.STARTED)){
-                viewModel.userLoginState.collectLatest{
+            repeatOnLifecycle((Lifecycle.State.STARTED)) {
+                viewModel.userLoginState.collectLatest {
                     delay(3000)
                     if (it) navigateToLogin()
                     else navigateToHome()
@@ -45,12 +45,13 @@ class SplashActivity : AppCompatActivity() {
         }
     }
 
-    fun navigateToLogin(){
+    fun navigateToLogin() {
         val intent = Intent(this@SplashActivity, LoginActivity::class.java)
         startActivity(intent)
         finish()
     }
-    fun navigateToHome(){
+
+    fun navigateToHome() {
         val intent = Intent(this@SplashActivity, DashboardActivity::class.java)
         startActivity(intent)
         finish()
