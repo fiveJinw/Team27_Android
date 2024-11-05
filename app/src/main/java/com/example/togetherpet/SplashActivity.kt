@@ -38,8 +38,8 @@ class SplashActivity : AppCompatActivity() {
             repeatOnLifecycle((Lifecycle.State.STARTED)) {
                 viewModel.userLoginState.collectLatest {
                     delay(3000)
-                    if (it) navigateToLogin()
-                    else navigateToHome()
+                    if (it) navigateToHome()
+                    else navigateToLogin()
                 }
             }
         }

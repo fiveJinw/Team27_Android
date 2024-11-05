@@ -199,6 +199,7 @@ class WalkingPetFragment : Fragment() {
                 Log.d("testt", error.message.toString())
                 //에러 처리
             }
+
         }, object : KakaoMapReadyCallback() {
             override fun onMapReady(kakaoMap: KakaoMap) {
                 Log.d("testt", "MapReady")
@@ -212,10 +213,6 @@ class WalkingPetFragment : Fragment() {
     fun startWalkingTracker(){
         checkPermission()
         viewModel.startLocationTracking()
-    }
-
-    fun setMyLocationPin(array: Array<LatLng>){
-        createLabel(array.last())
     }
 
     fun checkPermission(){
@@ -260,7 +257,6 @@ class WalkingPetFragment : Fragment() {
     }
 
     fun showStopDialog(){
-        // TODO : 다이얼로그 띄워야함
         val dialogBinding = CustomDialogBinding.inflate(layoutInflater)
         val dialogBuilder = AlertDialog.Builder(requireContext())
             .setView(dialogBinding.root)
@@ -304,10 +300,6 @@ class WalkingPetFragment : Fragment() {
         val style = labelManager
             ?.addLabelStyles(LabelStyles.from(LabelStyle.from(R.drawable.walking_my_location_pin).setAnchorPoint(0.5f, 0.5f).setApplyDpScale(true)))
         kakaoMap?.getLabelManager()?.getLayer()?.addLabel(LabelOptions.from("center",pos).setStyles(style))
-    }
-
-    override fun onPause() {
-        super.onPause()
     }
 
     override fun onDestroyView() {
