@@ -38,15 +38,15 @@ class SplashActivity : AppCompatActivity() {
             repeatOnLifecycle((Lifecycle.State.STARTED)){
                 viewModel.userLoginState.collectLatest{
                     delay(3000)
-                    if (it) navigateToLogin()
-                    else navigateToHome()
+                    if (it) navigateToHome()
+                    else navigateToLogin()
                 }
             }
         }
     }
 
     fun navigateToLogin(){
-        val intent = Intent(this@SplashActivity, LoginActivity::class.java)
+        val intent = Intent(this@SplashActivity, InfoRegistrationActivity::class.java)
         startActivity(intent)
         finish()
     }
