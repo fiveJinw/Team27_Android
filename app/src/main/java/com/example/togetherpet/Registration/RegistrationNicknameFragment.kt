@@ -49,8 +49,10 @@ class RegistrationNicknameFragment : Fragment() {
 
         binding.apply {
             finishButton.setOnClickListener {
-                setUserName()
-                goToHomeActivitiy()
+                if(existNickname()) {
+                    setUserName()
+                    goToHomeActivitiy()
+                }
             }
         }
 
@@ -77,13 +79,27 @@ class RegistrationNicknameFragment : Fragment() {
 
     }
 
+    private fun checkNickname() : InputState {
+        return if(binding.nicknameInputField.text.isEmpty()){
+            binding.nicknameInputField.requestFocus()
+            InputState.NOT_EXIST_NICKNAME
+        }
+        else return InputState.EXIST_NICKNAME
+    }
+
+    private fun existNickname(): Boolean{
+        return when(checkNickname()){
+            InputState.EXIST_NICKNAME -> true
+            InputState.NOT_EXIST_NICKNAME -> false
+        }
+    }
+
     private fun setUserName() {
         sharedViewModel.setUserName(_binding?.nicknameInputField?.text.toString())
     }
 
     private fun goToHomeActivitiy() {
         sharedViewModel.registerUserAndPet(File(absolutelyPath(sharedViewModel.petImage.value, requireContext())))
-        //홈으로 이동
         navigateToHomeActivity()
     }
 
@@ -108,6 +124,11 @@ class RegistrationNicknameFragment : Fragment() {
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(intent)
         requireActivity().finish() // 현재 액티비티를 종료하여 뒤로 가기를 막음
+    }
+
+    enum class InputState {
+        EXIST_NICKNAME,
+        NOT_EXIST_NICKNAME
     }
 
 }

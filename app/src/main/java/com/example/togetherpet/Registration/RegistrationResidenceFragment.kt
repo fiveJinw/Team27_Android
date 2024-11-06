@@ -14,35 +14,60 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class RegistrationResidenceFragment : Fragment() {
-    private var binding : FragmentInfoRegistrationResidenceBinding? = null
+    private var _binding : FragmentInfoRegistrationResidenceBinding? = null
+    private val binding get() = _binding!!
     private val sharedViewModel : RegistrationViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        binding = FragmentInfoRegistrationResidenceBinding.inflate(inflater)
-        return binding?.root
+    ): View {
+        _binding = FragmentInfoRegistrationResidenceBinding.inflate(inflater)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding?.apply {
+        binding.apply {
             nextButton.setOnClickListener { goToNextScreen() }
         }
     }
 
+    private fun checkResidenceAndFeature() : InputState{
+        return if(binding.residenceInputField.text.isEmpty()){
+            binding.residenceInputField.requestFocus()
+            InputState.NOT_EXIST_RESIDENCE
+        }
+        else if(binding.featureInputField.text.isEmpty()) {
+            binding.featureInputField.requestFocus()
+            InputState.NOT_EXIST_FEATURE
+        }
+        else return InputState.EXIST_RESIDENCE_AND_FEATURE
+    }
+
+    private fun existResidenceAndFeature(): Boolean{
+        return when(checkResidenceAndFeature()){
+            InputState.EXIST_RESIDENCE_AND_FEATURE -> true
+            else -> false
+        }
+    }
+
     private fun goToNextScreen(){
-        sharedViewModel.setPetFeature(binding?.featureInputField?.text.toString())
-        findNavController().navigate(R.id.action_registrationResidenceFragment_to_registrationImageFragment)
+        if(existResidenceAndFeature()) {
+            sharedViewModel.setPetFeature(binding.featureInputField.text.toString())
+            findNavController().navigate(R.id.action_registrationResidenceFragment_to_registrationImageFragment)
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding = null
+        _binding = null
     }
 
-
+    enum class InputState {
+        EXIST_RESIDENCE_AND_FEATURE,
+        NOT_EXIST_RESIDENCE,
+        NOT_EXIST_FEATURE
+    }
 }

@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -96,6 +97,7 @@ class RegistrationImageFragment : Fragment() {
 
     private fun goToNextScreen() {
         if (existimage()) {
+            Log.d("testt", "${existimage()}")
             findNavController().navigate(R.id.action_registrationImageFragment_to_registrationNicknameFragment)
         }
     }
@@ -112,7 +114,7 @@ class RegistrationImageFragment : Fragment() {
     }
 
     private fun checkImage(): InputState {
-        return if (binding.animalImage.drawable == null) InputState.NOT_EXIST_IMAGE
+        return if (sharedViewModel.petImage.value == Uri.EMPTY) InputState.NOT_EXIST_IMAGE
         else InputState.EXIST_IMAGE
     }
 
