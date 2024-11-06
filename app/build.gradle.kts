@@ -49,6 +49,11 @@ android {
             "KAKAO_LOCAL_API_KEY",
             gradleLocalProperties(rootDir, providers).getProperty("KAKAO_LOCAL_API_KEY")
         )
+        buildConfigField(
+            "String",
+            "LOCAL",
+            gradleLocalProperties(rootDir, providers).getProperty("LOCAL")
+        )
     }
 
 
