@@ -20,5 +20,4 @@ interface RegisterService {
         @Part("userName") userName: RequestBody
     ): Response<Unit>
 
-
 }

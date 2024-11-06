@@ -38,11 +38,6 @@ import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
-import com.kakao.vectormap.route.RouteLineOptions
-import com.kakao.vectormap.route.RouteLineSegment
-import com.kakao.vectormap.route.RouteLineStyle
-import com.kakao.vectormap.route.RouteLineStyles
-import com.kakao.vectormap.route.RouteLineStylesSet
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -199,7 +194,6 @@ class WalkingPetFragment : Fragment() {
                 Log.d("testt", error.message.toString())
                 //에러 처리
             }
-
         }, object : KakaoMapReadyCallback() {
             override fun onMapReady(kakaoMap: KakaoMap) {
                 Log.d("testt", "MapReady")
@@ -300,6 +294,11 @@ class WalkingPetFragment : Fragment() {
         val style = labelManager
             ?.addLabelStyles(LabelStyles.from(LabelStyle.from(R.drawable.walking_my_location_pin).setAnchorPoint(0.5f, 0.5f).setApplyDpScale(true)))
         kakaoMap?.getLabelManager()?.getLayer()?.addLabel(LabelOptions.from("center",pos).setStyles(style))
+    }
+
+
+    override fun onPause() {
+        super.onPause()
     }
 
     override fun onDestroyView() {

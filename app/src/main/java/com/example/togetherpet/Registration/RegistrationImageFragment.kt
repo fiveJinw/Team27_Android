@@ -38,7 +38,6 @@ class RegistrationImageFragment : Fragment() {
     private val sharedViewModel: RegistrationViewModel by activityViewModels()
     private lateinit var resultLauncher: ActivityResultLauncher<Intent>
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
